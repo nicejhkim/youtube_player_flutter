@@ -297,7 +297,8 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
         clipBehavior: Clip.none,
         children: [
           Transform.scale(
-            scale: controller.value.isFullScreen
+            scale: controller.value.isFullScreen &&
+                    !controller.flags.isPortraitVideo
                 ? (1 / _aspectRatio * MediaQuery.of(context).size.width) /
                     MediaQuery.of(context).size.height
                 : 1,

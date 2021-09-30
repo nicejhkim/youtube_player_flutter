@@ -38,6 +38,9 @@ class _YoutubePlayerBuilderState extends State<YoutubePlayerBuilder>
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
+    widget.player.controller.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
@@ -48,14 +51,21 @@ class _YoutubePlayerBuilderState extends State<YoutubePlayerBuilder>
 
   @override
   void didChangeMetrics() {
-    final physicalSize = SchedulerBinding.instance?.window.physicalSize;
-    final controller = widget.player.controller;
-    if (physicalSize != null && physicalSize.width > physicalSize.height) {
-      controller.updateValue(controller.value.copyWith(isFullScreen: true));
+    // final physicalSize = SchedulerBinding.instance?.window.physicalSize;
+    // final controller = widget.player.controller;
+    // if (physicalSize != null && physicalSize.width > physicalSize.height) {
+    //   controller.updateValue(controller.value.copyWith(isFullScreen: true));
+    //   SystemChrome.setEnabledSystemUIOverlays([]);
+    //
+    // } else {
+    //   controller.updateValue(controller.value.copyWith(isFullScreen: false));
+    //
+    //   widget.onExitFullScreen?.call();
+    // }
+    if (widget.player.controller.value.isFullScreen) {
       SystemChrome.setEnabledSystemUIOverlays([]);
       widget.onEnterFullScreen?.call();
     } else {
-      controller.updateValue(controller.value.copyWith(isFullScreen: false));
       SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
       widget.onExitFullScreen?.call();
     }
@@ -79,9 +89,11 @@ class _YoutubePlayerBuilderState extends State<YoutubePlayerBuilder>
       ),
     );
     final child = widget.builder(context, _player);
-    return OrientationBuilder(
-      builder: (context, orientation) =>
-          orientation == Orientation.portrait ? child : _player,
-    );
+    return widget.player.controller.value.isFullScreen ? _player : child;
+    // return OrientationBuilder(
+    //   builder: (context, orientation) =>
+    //       // orientation == Orientation.portrait ? child : _player,
+    //       widget.player.controller.value.isFullScreen ? _player : child,
+    // );
   }
 }
